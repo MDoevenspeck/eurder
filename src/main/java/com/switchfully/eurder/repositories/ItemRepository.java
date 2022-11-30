@@ -1,11 +1,9 @@
 package com.switchfully.eurder.repositories;
 
 import com.switchfully.eurder.model.items.Item;
-import com.switchfully.eurder.model.items.Price;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -13,7 +11,6 @@ import java.util.Optional;
 public class ItemRepository {
 
     private final Map<String, Item> items = new HashMap<>();
-
 
     public Map<String, Item> getAllItems(){
         return items;

@@ -1,9 +1,6 @@
 package com.switchfully.eurder.services;
 
-import com.switchfully.eurder.dtos.orders.CreateItemGroupDto;
-import com.switchfully.eurder.dtos.orders.CreateOrderDto;
-import com.switchfully.eurder.dtos.orders.ItemGroupDto;
-import com.switchfully.eurder.dtos.orders.OrderDto;
+import com.switchfully.eurder.dtos.orders.*;
 import com.switchfully.eurder.mappers.OrderMapper;
 import com.switchfully.eurder.model.ItemGroup;
 import com.switchfully.eurder.model.Order;
@@ -46,7 +43,7 @@ public class OrderService {
         return orderMapper.toDto(order, itemGroupDtos, total);
     }
 
-    public void createOrder(CreateOrderDto createOrderDto, String userId) {
+    public OrderDto createOrder(CreateOrderDto createOrderDto, String userId) {
         validateItems(createOrderDto.items());
         List<ItemGroup> items = new ArrayList<>();
 
@@ -59,6 +56,7 @@ public class OrderService {
             updateStock(item, createItemGroupDto.getAmount());
         }
         Order order = orderRepository.saveOrder(orderMapper.toOrder(userId, items));
+        return getOrder(order);
     }
 
     private void validateItems(List<CreateItemGroupDto> items) {
@@ -75,7 +73,9 @@ public class OrderService {
         return LocalDate.now().plusDays(SHIPPING_DAYS_WHEN_IN_STOCK);
     }
 
-    public List<OrderDto> getAllOrdersByCustomerId(String customerId) {
-        return getAllOrders().stream().filter(orderDto -> orderDto.customerId().equals(customerId)).toList();
+    public OrdersDto getAllOrdersByCustomerId(String customerId) {
+        List<OrderDto> ordersDto = getAllOrders().stream().filter(orderDto -> orderDto.customerId().equals(customerId)).toList();
+        double total = ordersDto.stream().mapToDouble(OrderDto::total).sum();
+        return new OrdersDto(ordersDto, total);
     }
 }

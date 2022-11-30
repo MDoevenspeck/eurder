@@ -2,6 +2,7 @@ package com.switchfully.eurder.controllers;
 
 import com.switchfully.eurder.dtos.orders.CreateOrderDto;
 import com.switchfully.eurder.dtos.orders.OrderDto;
+import com.switchfully.eurder.dtos.orders.OrdersDto;
 import com.switchfully.eurder.model.users.security.Feature;
 import com.switchfully.eurder.services.OrderService;
 import com.switchfully.eurder.services.SecurityService;
@@ -28,16 +29,16 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<OrderDto> getAllOrdersByCustomerId(@RequestHeader(required = false) String authorization) {
+    @GetMapping(params = "user", produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrdersDto getAllOrdersByCustomerId(@RequestHeader(required = false) String authorization) {
         String userId = securityService.validateAuthorisation(authorization, Feature.GET_ALL_ORDERS_BY_CUSTOMER_ID);
         return orderService.getAllOrdersByCustomerId(userId);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void createOrder(@Valid @RequestBody CreateOrderDto createOrderDto, @RequestHeader(required = false) String authorization) {
+    public OrderDto createOrder(@Valid @RequestBody CreateOrderDto createOrderDto, @RequestHeader(required = false) String authorization) {
         String userId = securityService.validateAuthorisation(authorization, Feature.CREATE_ORDER);
-        orderService.createOrder(createOrderDto, userId);
+        return orderService.createOrder(createOrderDto, userId);
     }
 }

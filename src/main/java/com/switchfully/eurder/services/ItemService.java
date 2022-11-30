@@ -10,6 +10,7 @@ import com.switchfully.eurder.model.items.StockLevel;
 import com.switchfully.eurder.repositories.ItemRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,12 +25,12 @@ public class ItemService {
         this.itemMapper = itemMapper;
     }
 
-    public ItemDto createItem(CreateItemDto createItemDto){
+    public ItemDto createItem(CreateItemDto createItemDto) {
         Item item = itemRepository.saveItem(itemMapper.toItem(createItemDto));
         return itemMapper.toDto(item, calculateStockLevel(item));
     }
 
-    public List<ItemDto> getAllItems(){
+    public List<ItemDto> getAllItems() {
         return itemRepository.getAllItems().values().stream().map(item -> itemMapper.toDto(item, calculateStockLevel(item))).toList();
     }
 
@@ -38,7 +39,10 @@ public class ItemService {
     }
 
     public List<ItemDto> getAllItemsByStockLevel(String stockLevel) {
-        return getAllItemsSortedByStockLevel().stream().filter(itemDto -> itemDto.StockLevel().equals(stockLevel)).toList();
+        if (!Arrays.asList(StockLevel.values()).toString().contains(stockLevel)) throw new IllegalArgumentException("invalid stock level");
+        List<ItemDto> items = getAllItemsSortedByStockLevel().stream().filter(itemDto -> itemDto.StockLevel().equals(stockLevel)).toList();
+        if (items.isEmpty()) throw new NoSuchElementException("no items matching requested stock level where found");
+        return items;
     }
 
     public ItemDto updateItem(UpdateItemDto updateItemDto, String id) {
@@ -50,7 +54,7 @@ public class ItemService {
         return itemMapper.toDto(updateItem, calculateStockLevel(updateItem));
     }
 
-    public String calculateStockLevel(Item item){
+    public String calculateStockLevel(Item item) {
         if (item.getStock() < StockLevel.STOCK_LOW.getLevel()) return StockLevel.STOCK_LOW.toString();
         if (item.getStock() < StockLevel.STOCK_MEDIUM.getLevel()) return StockLevel.STOCK_MEDIUM.toString();
         else return StockLevel.STOCK_HIGH.toString();

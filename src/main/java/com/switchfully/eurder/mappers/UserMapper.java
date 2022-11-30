@@ -1,12 +1,11 @@
 package com.switchfully.eurder.mappers;
 
-import com.switchfully.eurder.model.users.Customer;
-import com.switchfully.eurder.model.users.Role;
-import com.switchfully.eurder.model.users.User;
 import com.switchfully.eurder.dtos.users.CreateCustomerDto;
 import com.switchfully.eurder.dtos.users.CreateUserDto;
 import com.switchfully.eurder.dtos.users.CustomerDto;
 import com.switchfully.eurder.dtos.users.UserDto;
+import com.switchfully.eurder.model.users.Customer;
+import com.switchfully.eurder.model.users.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

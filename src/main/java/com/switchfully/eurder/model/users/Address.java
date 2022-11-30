@@ -2,16 +2,8 @@ package com.switchfully.eurder.model.users;
 
 import javax.validation.constraints.NotBlank;
 
-public class Address {
-    @NotBlank
-    private final String streetName;
-    @NotBlank
-    private final String houseNumber;
-    @NotBlank
-    private final String city;
-    @NotBlank
-    private final String postalCode;
-
+public record Address(@NotBlank String streetName, @NotBlank String houseNumber, @NotBlank String city,
+                      @NotBlank String postalCode) {
     public Address(String streetName, String houseNumber, String city, String postalCode) {
         this.streetName = streetName;
         this.houseNumber = houseNumber;
@@ -19,19 +11,23 @@ public class Address {
         this.postalCode = postalCode;
     }
 
-    public String getStreetName() {
+    @Override
+    public String streetName() {
         return streetName;
     }
 
-    public String getHouseNumber() {
+    @Override
+    public String houseNumber() {
         return houseNumber;
     }
 
-    public String getCity() {
+    @Override
+    public String city() {
         return city;
     }
 
-    public String getPostalCode() {
+    @Override
+    public String postalCode() {
         return postalCode;
     }
 }
