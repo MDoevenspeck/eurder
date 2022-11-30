@@ -6,9 +6,11 @@ import com.switchfully.eurder.dtos.items.UpdateItemDto;
 import com.switchfully.eurder.mappers.ItemMapper;
 import com.switchfully.eurder.model.items.Item;
 import com.switchfully.eurder.model.items.Price;
+import com.switchfully.eurder.model.items.StockLevel;
 import com.switchfully.eurder.repositories.ItemRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -23,19 +25,34 @@ public class ItemService {
     }
 
     public ItemDto createItem(CreateItemDto createItemDto){
-        return itemMapper.toDto(itemRepository.saveItem(itemMapper.toItem(createItemDto)));
+        Item item = itemRepository.saveItem(itemMapper.toItem(createItemDto));
+        return itemMapper.toDto(item, calculateStockLevel(item));
     }
 
     public List<ItemDto> getAllItems(){
-        return itemMapper.toDto(itemRepository.getAllItems());
+        return itemRepository.getAllItems().values().stream().map(item -> itemMapper.toDto(item, calculateStockLevel(item))).toList();
+    }
+
+    public List<ItemDto> getAllItemsSortedByStockLevel() {
+        return itemRepository.getAllItems().values().stream().sorted(Comparator.comparingInt(Item::getStock)).map(item -> itemMapper.toDto(item, calculateStockLevel(item))).toList();
+    }
+
+    public List<ItemDto> getAllItemsByStockLevel(String stockLevel) {
+        return getAllItemsSortedByStockLevel().stream().filter(itemDto -> itemDto.StockLevel().equals(stockLevel)).toList();
     }
 
     public ItemDto updateItem(UpdateItemDto updateItemDto, String id) {
-        Item updateItem = itemRepository.getItemById(id).orElseThrow(() -> new NoSuchElementException("No item with id:" + id + "in our collection" ));
+        Item updateItem = itemRepository.getItemById(id).orElseThrow(() -> new NoSuchElementException("No item with id:" + id + "in our collection"));
         updateItem.setName(updateItemDto.name());
         updateItem.setDescription(updateItem.getDescription());
         updateItem.setPrice(new Price(updateItemDto.price()));
         updateItem.setStock(updateItemDto.stock());
-        return itemMapper.toDto(updateItem);
+        return itemMapper.toDto(updateItem, calculateStockLevel(updateItem));
+    }
+
+    public String calculateStockLevel(Item item){
+        if (item.getStock() < StockLevel.STOCK_LOW.getLevel()) return StockLevel.STOCK_LOW.toString();
+        if (item.getStock() < StockLevel.STOCK_MEDIUM.getLevel()) return StockLevel.STOCK_MEDIUM.toString();
+        else return StockLevel.STOCK_HIGH.toString();
     }
 }

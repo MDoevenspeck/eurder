@@ -10,12 +10,12 @@ import java.util.List;
 
 @Component
 public class ItemMapper {
-    public List<ItemDto> toDto(List<Item> items){
-        return items.stream().map(this::toDto).toList();
+    public List<ItemDto> toDto(List<Item> items, String stockLevel){
+        return items.stream().map(item -> toDto(item, stockLevel)).toList();
     }
 
-    public ItemDto toDto(Item item){
-        return new ItemDto(item.getId(), item.getName(), item.getDescription(), item.getPrice().getAmount() +" "+ item.getPrice().getCurrency(), item.getStock());
+    public ItemDto toDto(Item item, String stockLevel){
+        return new ItemDto(item.getId(), item.getName(), item.getDescription(), item.getPrice().getAmount() +" "+ item.getPrice().getCurrency(), item.getStock(), stockLevel);
     }
 
     public Item toItem(CreateItemDto createItemDto){

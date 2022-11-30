@@ -30,7 +30,7 @@ public class UserMapper {
         return new User(createUserDto.username(), createUserDto.password(),createUserDto.role());
     }
     public Customer toCustomer(CreateCustomerDto createCustomerDto){
-        return new Customer(createCustomerDto.username(), createCustomerDto.password(), Role.CUSTOMER,
+        return new Customer(createCustomerDto.username(), createCustomerDto.password(),
                 createCustomerDto.getFirstname(),createCustomerDto.getLastname(), createCustomerDto.getEmail(),
                 createCustomerDto.getAddress(), createCustomerDto.getPhoneNumber());
     }

@@ -3,7 +3,7 @@ package com.switchfully.eurder.controllers;
 import com.switchfully.eurder.dtos.users.CreateAdminDto;
 import com.switchfully.eurder.dtos.users.CreateCustomerDto;
 import com.switchfully.eurder.dtos.users.UserDto;
-import com.switchfully.eurder.model.users.Feature;
+import com.switchfully.eurder.model.users.security.Feature;
 import com.switchfully.eurder.services.SecurityService;
 import com.switchfully.eurder.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -30,11 +30,13 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping(params = "customer", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<? extends UserDto> getAllCustomers(@RequestParam String customer, @RequestHeader(required = false) String authorization) {
-        securityService.validateAuthorisation(authorization, Feature.GET_ALL_CUSTOMERS);
-        return userService.getAllCustomers();
+    @GetMapping(params = "userType", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<? extends UserDto> getAllUsersByUserType(@RequestParam(defaultValue = "all") String userType, @RequestHeader(required = false) String authorization) {
+        securityService.validateAuthorisation(authorization, Feature.GET_ALL_USERS_BY_USERTYPE);
+        return userService.getAllUsersByUserType(userType);
     }
+
+
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDto getCustomerById(@PathVariable String id, @RequestHeader(required = false) String authorization) {
         securityService.validateAuthorisation(authorization, Feature.GET_CUSTOMER_BY_ID);
@@ -43,14 +45,14 @@ public class UserController {
 
     @PostMapping(params = "admin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@RequestParam String admin,@Valid @RequestBody CreateAdminDto createAdminDto, @RequestHeader(required = false) String authorization) {
-        securityService.validateAuthorisation(authorization, Feature.GET_ALL_CUSTOMERS);
-         return userService.createAdmin(createAdminDto);
+    public UserDto createUser(@Valid @RequestBody CreateAdminDto createAdminDto, @RequestHeader(required = false) String authorization) {
+        securityService.validateAuthorisation(authorization, Feature.CREATE_ADMIN);
+        return userService.createAdmin(createAdminDto);
     }
 
     @PostMapping(params = "customer", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@RequestParam String customer,@Valid  @RequestBody CreateCustomerDto createCustomerDto, @RequestHeader(required = false) String authorization) {
+    public UserDto createUser(@RequestParam String customer, @Valid @RequestBody CreateCustomerDto createCustomerDto, @RequestHeader(required = false) String authorization) {
         return userService.createCustomer(createCustomerDto);
     }
 }

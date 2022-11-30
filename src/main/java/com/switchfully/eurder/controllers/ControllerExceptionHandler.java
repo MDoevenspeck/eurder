@@ -25,27 +25,32 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({UnauthorizedException.class, WrongPasswordException.class, UserAlreadyExistsException.class})
+    @ExceptionHandler({UnauthorizedException.class, WrongPasswordException.class, UserAlreadyExistsException.class, UnknownUserException.class})
     protected void resourceNotAuthorized(RuntimeException exception, HttpServletResponse response) throws IOException {
         log.warn(exception.getMessage());
         response.sendError(HttpServletResponse.SC_FORBIDDEN, exception.getMessage());
     }
 
-    @ExceptionHandler({UnknownUserException.class, NullPointerException.class, NoSuchElementException.class})
+    @ExceptionHandler({NullPointerException.class, NoSuchElementException.class})
     protected void resourceNotfound(RuntimeException exception, HttpServletResponse response) throws IOException {
         log.warn(exception.getMessage());
         response.sendError(HttpServletResponse.SC_NOT_FOUND, exception.getMessage());
+    }
+    @ExceptionHandler({IllegalArgumentException.class})
+    protected void wrongInput(RuntimeException exception, HttpServletResponse response) throws IOException {
+        log.warn(exception.getMessage());
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
-
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) ->{
 
             String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
+            log.warn(fieldName +" "+message);
             errors.put(fieldName, message);
         });
         return new ResponseEntity<Object>(errors, HttpStatus.BAD_REQUEST);

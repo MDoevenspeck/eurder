@@ -1,4 +1,4 @@
-package com.switchfully.eurder.services;
+package com.switchfully.eurder.model.users.security;
 
 public class UsernamePassword {
     private final String username;

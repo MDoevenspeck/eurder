@@ -27,8 +27,8 @@ public class UserRepository {
         return Optional.ofNullable(users.get(id));
     }
 
-    public List<User> getAllUsers(){
-        return users.values().stream().toList();
+    public Map<String, User> getAllUsers(){
+        return users;
     }
 
     public User saveUser(User user){

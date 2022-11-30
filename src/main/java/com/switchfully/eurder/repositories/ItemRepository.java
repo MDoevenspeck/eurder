@@ -14,13 +14,9 @@ public class ItemRepository {
 
     private final Map<String, Item> items = new HashMap<>();
 
-    public ItemRepository() {
-        Item test = new Item("test", "testd", new Price(50), 50 );
-        items.put(test.getId(), test);
-    }
 
-    public List<Item> getAllItems(){
-        return items.values().stream().toList();
+    public Map<String, Item> getAllItems(){
+        return items;
     }
 
     public Optional<Item> getItemById(String id){

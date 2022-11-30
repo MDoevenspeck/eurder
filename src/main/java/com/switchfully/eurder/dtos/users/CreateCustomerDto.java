@@ -6,6 +6,7 @@ import com.switchfully.eurder.model.users.Role;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class CreateCustomerDto extends CreateUserDto {
     @NotBlank
@@ -15,6 +16,7 @@ public class CreateCustomerDto extends CreateUserDto {
     @NotBlank
     @Email
     private final String email;
+    @NotNull
     @Valid
     private final Address address;
     @NotBlank

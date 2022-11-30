@@ -2,10 +2,10 @@ package com.switchfully.eurder.services;
 
 import com.switchfully.eurder.dtos.users.CreateAdminDto;
 import com.switchfully.eurder.dtos.users.CreateCustomerDto;
-import com.switchfully.eurder.dtos.users.CustomerDto;
 import com.switchfully.eurder.dtos.users.UserDto;
 import com.switchfully.eurder.mappers.UserMapper;
 import com.switchfully.eurder.model.users.Customer;
+import com.switchfully.eurder.model.users.Role;
 import com.switchfully.eurder.model.users.User;
 import com.switchfully.eurder.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -24,11 +24,22 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
-        return userMapper.toDto(userRepository.getAllUsers());
+        return userMapper.toDto(userRepository.getAllUsers().values().stream().toList());
     }
 
-    public List<CustomerDto> getAllCustomers() {
-        return userRepository.getAllUsers().stream().filter(user -> user instanceof Customer).map(customer -> userMapper.toDto((Customer) customer)).toList();
+    public List<? extends UserDto> getAllUsersByUserType(String userType) {
+        if (userType.equals("customer")) {
+            return userRepository.getAllUsers().values().stream()
+                    .filter(user -> user.getRole() == Role.CUSTOMER)
+                    .map(customer -> userMapper.toDto((Customer) customer)).toList();
+        }
+        if (userType.equals("admin")) {
+            return userRepository.getAllUsers().values().stream()
+                    .filter(user -> user.getRole().equals(Role.ADMIN))
+                    .map(userMapper::toDto)
+                    .toList();
+        }
+        throw new IllegalArgumentException("usertype not found");
     }
 
     public UserDto getCustomerById(String id) {

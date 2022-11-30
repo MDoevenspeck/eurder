@@ -1,5 +1,7 @@
 package com.switchfully.eurder.model.users;
 
+import com.switchfully.eurder.model.users.security.Feature;
+
 import java.util.UUID;
 
 
