@@ -1,5 +1,6 @@
 package com.switchfully.eurder.controllers;
 
+import com.switchfully.eurder.dtos.users.CustomerDto;
 import com.switchfully.eurder.dtos.users.UserDto;
 import com.switchfully.eurder.model.users.Address;
 import com.switchfully.eurder.model.users.Customer;
@@ -20,7 +21,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-
 class UserControllerTest {
 
     @LocalServerPort
@@ -36,7 +36,6 @@ class UserControllerTest {
         userRepository.saveUser(Danny);
         userRepository.saveUser(Jane);
     }
-
 
     @DisplayName("Tests regarding get all users")
     @Nested
@@ -63,19 +62,49 @@ class UserControllerTest {
         }
     }
 
-    @AfterEach
-    void cleanup(){
-        RestAssured.reset();
+    @DisplayName("Tests regarding getting users by type")
+    @Nested
+    class gettingUsersByType {
+        @Test
+        @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+        void GivenAUsersEndpoint_WhenGettingCustomers_ThenGetAllCustomers() {
+            List<CustomerDto> usersInRepo = RestAssured.given().port(port).auth().preemptive().basic("admin", "root")
+                    .when().get("/users?userType=customer").then().statusCode(200).extract().as(new TypeRef<List<CustomerDto>>() {
+                    });
+            System.out.println(usersInRepo.get(1).getFirstname());
+            assertEquals(2, usersInRepo.size());
+        }
+
+        @Test
+        @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+        void GivenAUsersEndpoint_WhenGettingAdmins_ThenGetAllAdmins() {
+            List<CustomerDto> usersInRepo = RestAssured.given().port(port).auth().preemptive().basic("admin", "root")
+                    .when().get("/users?userType=admin").then().statusCode(200).extract().as(new TypeRef<List<CustomerDto>>() {
+                    });
+
+            assertEquals(1, usersInRepo.size());
+        }
+
+        @Test
+        @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+        void GivenAUsersEndpoint_WhenGettingNonExistingUserType_ThenGetErrorUserTypeNotFound() {
+            Map<String, String> response = RestAssured.given().port(port).auth().preemptive().basic("admin", "root")
+                    .when().get("/users?userType=456").then().statusCode(400).extract().body().as(new TypeRef<Map<String, String>>() {
+                    });
+            String ResponseMessage = new JSONObject(response).get("message").toString();
+
+            assertEquals("usertype not found", ResponseMessage);
+        }
+
+        @Test
+        @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+        void GivenAUsersEndpoint_WhenGettingAdminsWhenNotAdminUser_ThenAccesForbidden() {
+            RestAssured.given().port(port).auth().preemptive().basic("Danny", "123")
+                    .when().get("/users?userType=admin").then().assertThat().statusCode(403);
+        }
     }
-//    @Test
-//    void getAllUsersByUserType() {
-//        // GIVEN
-//
-//        // WHEN
-//
-//        // THEN
-//    }
-//
+}
+
 //    @Test
 //    void getCustomerById() {
 //        // GIVEN
@@ -103,4 +132,3 @@ class UserControllerTest {
 //        // THEN
 //    }
 
-}
