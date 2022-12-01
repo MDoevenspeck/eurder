@@ -1,6 +1,6 @@
 package com.switchfully.eurder.repositories;
 
-import com.switchfully.eurder.model.Order;
+import com.switchfully.eurder.model.orders.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;

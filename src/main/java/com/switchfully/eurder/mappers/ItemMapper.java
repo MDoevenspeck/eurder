@@ -6,13 +6,8 @@ import com.switchfully.eurder.model.items.Item;
 import com.switchfully.eurder.model.items.Price;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class ItemMapper {
-    public List<ItemDto> toDto(List<Item> items, String stockLevel){
-        return items.stream().map(item -> toDto(item, stockLevel)).toList();
-    }
 
     public ItemDto toDto(Item item, String stockLevel){
         return new ItemDto(item.getId(), item.getName(), item.getDescription(), item.getPrice().getAmount() +" "+ item.getPrice().getCurrency(), item.getStock(), stockLevel);

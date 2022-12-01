@@ -36,7 +36,6 @@ public class UserController {
         return userService.getAllUsersByUserType(userType);
     }
 
-
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDto getCustomerById(@PathVariable String id, @RequestHeader(required = false) String authorization) {
         securityService.validateAuthorisation(authorization, Feature.GET_CUSTOMER_BY_ID);
@@ -45,14 +44,14 @@ public class UserController {
 
     @PostMapping(params = "admin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@Valid @RequestBody CreateAdminDto createAdminDto, @RequestHeader(required = false) String authorization) {
+    public UserDto createAdmin(@Valid @RequestBody CreateAdminDto createAdminDto, @RequestHeader(required = false) String authorization) {
         securityService.validateAuthorisation(authorization, Feature.CREATE_ADMIN);
         return userService.createAdmin(createAdminDto);
     }
 
     @PostMapping(params = "customer", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@RequestParam String customer, @Valid @RequestBody CreateCustomerDto createCustomerDto, @RequestHeader(required = false) String authorization) {
+    public UserDto createCustomer(@Valid @RequestBody CreateCustomerDto createCustomerDto) {
         return userService.createCustomer(createCustomerDto);
     }
 }

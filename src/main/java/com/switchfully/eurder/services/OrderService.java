@@ -2,8 +2,8 @@ package com.switchfully.eurder.services;
 
 import com.switchfully.eurder.dtos.orders.*;
 import com.switchfully.eurder.mappers.OrderMapper;
-import com.switchfully.eurder.model.ItemGroup;
-import com.switchfully.eurder.model.Order;
+import com.switchfully.eurder.model.orders.ItemGroup;
+import com.switchfully.eurder.model.orders.Order;
 import com.switchfully.eurder.model.items.Item;
 import com.switchfully.eurder.repositories.ItemRepository;
 import com.switchfully.eurder.repositories.OrderRepository;
@@ -33,30 +33,32 @@ public class OrderService {
     }
 
     private OrderDto getOrder(Order order) {
-        double total = 0;
-        List<ItemGroupDto> itemGroupDtos = new ArrayList<>();
-        for (ItemGroup itemGroup : order.getItemGroups()) {
-            double subtotal = itemGroup.getOrderAmount() * itemGroup.getItemPriceFrozen();
-            total += subtotal;
-            itemGroupDtos.add(orderMapper.toDto(itemGroup, subtotal));
-        }
-        return orderMapper.toDto(order, itemGroupDtos, total);
+        List<ItemGroupDto> itemGroupDtos = getItemGroupDtos(order.getItemGroups());
+        double orderTotal = itemGroupDtos.stream().mapToDouble(ItemGroupDto::total).sum();
+        return orderMapper.toDto(order, itemGroupDtos, orderTotal);
+    }
+
+    private List<ItemGroupDto> getItemGroupDtos(List<ItemGroup> itemGroups) {
+        return itemGroups.stream().map(itemGroup -> orderMapper.toDto(itemGroup,itemGroup.orderAmount() * itemGroup.itemPriceFrozen())).toList();
     }
 
     public OrderDto createOrder(CreateOrderDto createOrderDto, String userId) {
         validateItems(createOrderDto.items());
+        List<ItemGroup> items = getItemGroups(createOrderDto);
+        Order order = orderRepository.saveOrder(orderMapper.toOrder(userId, items));
+        return getOrder(order);
+    }
+
+    private List<ItemGroup> getItemGroups(CreateOrderDto createOrderDto) {
         List<ItemGroup> items = new ArrayList<>();
 
         for (CreateItemGroupDto createItemGroupDto : createOrderDto.items()) {
             Item item = itemRepository.getItemById(createItemGroupDto.getItemId()).orElseThrow();
-
             LocalDate shippingDate = setShippingDate(createItemGroupDto.getAmount(), item.getStock());
             items.add(orderMapper.toItemGroup(createItemGroupDto, item.getPrice().getAmount(), shippingDate));
-
             updateStock(item, createItemGroupDto.getAmount());
         }
-        Order order = orderRepository.saveOrder(orderMapper.toOrder(userId, items));
-        return getOrder(order);
+        return items;
     }
 
     private void validateItems(List<CreateItemGroupDto> items) {

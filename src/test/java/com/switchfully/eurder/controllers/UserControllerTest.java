@@ -165,6 +165,27 @@ class UserControllerTest {
 
         @Test
         @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+        void GivenAUsersEndpoint_WhenTryingTOCreatingAUserThatAlreadyExists_ThenThrowError() {
+            JSONObject requestParams = new JSONObject();
+            requestParams.put("username", "Jonas");
+            requestParams.put("password", "123");
+            requestParams.put("firstname", "Jonas");
+            requestParams.put("lastname", "Doevenspeck");
+            requestParams.put("email", "dannyD@gmail.com");
+            requestParams.put("address", new Address("test", "100", "Lubbeek", "3202"));
+            requestParams.put("phoneNumber", "016260704");
+
+            RestAssured.given().port(port).contentType("application/json").body(requestParams)
+                    .when().post("/users?customer")
+                    .then().assertThat().statusCode(201);
+
+            RestAssured.given().port(port).contentType("application/json").body(requestParams)
+                    .when().post("/users?customer")
+                    .then().assertThat().statusCode(403);
+        }
+
+        @Test
+        @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
         void GivenAUsersEndpoint_WhenCreatingAUserWithMissingFields_ThenThrowError() {
             JSONObject requestParams = new JSONObject();
             requestParams.put("username", "");

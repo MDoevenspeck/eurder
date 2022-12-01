@@ -1,12 +1,10 @@
 package com.switchfully.eurder.controllers;
 
-import com.switchfully.eurder.dtos.items.ItemDto;
 import com.switchfully.eurder.dtos.orders.CreateItemGroupDto;
-import com.switchfully.eurder.dtos.orders.ItemGroupDto;
 import com.switchfully.eurder.dtos.orders.OrderDto;
 import com.switchfully.eurder.dtos.orders.OrdersDto;
-import com.switchfully.eurder.model.ItemGroup;
-import com.switchfully.eurder.model.Order;
+import com.switchfully.eurder.model.orders.ItemGroup;
+import com.switchfully.eurder.model.orders.Order;
 import com.switchfully.eurder.model.items.Item;
 import com.switchfully.eurder.model.items.Price;
 import com.switchfully.eurder.model.users.Address;
@@ -205,13 +203,12 @@ class OrderControllerTest {
             JSONObject requestParams = new JSONObject();
             requestParams.put("items", List.of(new CreateItemGroupDto(item4.getId(), "25")));
 
-            OrderDto order = RestAssured.given().port(port).auth().preemptive().basic("Matti", "123").contentType("application/json").body(requestParams)
+            RestAssured.given().port(port).auth().preemptive().basic("Matti", "123").contentType("application/json").body(requestParams)
                     .when().post("/orders")
-                    .then().assertThat().statusCode(201).extract().as(new TypeRef<OrderDto>() {
-                    });
+                    .then().assertThat().statusCode(201).extract();
 
             Order orderInRepo = orderRepository.getAllOrders().stream().filter(order1 -> order1.getCustomerId().equals(matti.getId())).findFirst().orElseThrow();
-            assertEquals(LocalDate.now().plusDays(7), orderInRepo.getItemGroups().get(0).getShippingDate());
+            assertEquals(LocalDate.now().plusDays(7), orderInRepo.getItemGroups().get(0).shippingDate());
         }
         @Test
         @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
@@ -225,13 +222,12 @@ class OrderControllerTest {
             JSONObject requestParams = new JSONObject();
             requestParams.put("items", List.of(new CreateItemGroupDto(item4.getId(), "5")));
 
-            OrderDto order = RestAssured.given().port(port).auth().preemptive().basic("Matti", "123").contentType("application/json").body(requestParams)
+            RestAssured.given().port(port).auth().preemptive().basic("Matti", "123").contentType("application/json").body(requestParams)
                     .when().post("/orders")
-                    .then().assertThat().statusCode(201).extract().as(new TypeRef<OrderDto>() {
-                    });
+                    .then().assertThat().statusCode(201);
 
             Order orderInRepo = orderRepository.getAllOrders().stream().filter(order1 -> order1.getCustomerId().equals(matti.getId())).findFirst().orElseThrow();
-            assertEquals(LocalDate.now().plusDays(1), orderInRepo.getItemGroups().get(0).getShippingDate());
+            assertEquals(LocalDate.now().plusDays(1), orderInRepo.getItemGroups().get(0).shippingDate());
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.switchfully.eurder.model;
+package com.switchfully.eurder.model.orders;
 
 import java.util.List;
 import java.util.UUID;
