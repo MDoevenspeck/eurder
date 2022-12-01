@@ -25,7 +25,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<OrderDto> getAllOrders() {
+    public List<OrderDto> getAllOrders(@RequestHeader(required = false) String authorization) {
+        String userId = securityService.validateAuthorisation(authorization, Feature.GET_ALL_ORDERS);
         return orderService.getAllOrders();
     }
 
