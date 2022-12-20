@@ -1,9 +1,28 @@
 package com.switchfully.eurder.model.users;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
-public record Address(@NotBlank String streetName, @NotBlank String houseNumber, @NotBlank String city,
-                      @NotBlank String postalCode) {
+@Entity
+@Table(name = "address")
+public class Address {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "address_seq")
+    @SequenceGenerator(name = "address_seq", sequenceName = "address_seq", allocationSize = 1)
+    private Long id;
+    @Column(name = "street_name")
+    private String streetName;
+    @Column(name = "house_number")
+    private String houseNumber;
+    @Column(name = "city")
+    private String city;
+    @Column(name = "postal_code")
+    private String postalCode;
+
+    public Address() {
+    }
+
     public Address(String streetName, String houseNumber, String city, String postalCode) {
         this.streetName = streetName;
         this.houseNumber = houseNumber;
@@ -11,23 +30,20 @@ public record Address(@NotBlank String streetName, @NotBlank String houseNumber,
         this.postalCode = postalCode;
     }
 
-    @Override
     public String streetName() {
         return streetName;
     }
 
-    @Override
     public String houseNumber() {
         return houseNumber;
     }
 
-    @Override
     public String city() {
         return city;
     }
 
-    @Override
     public String postalCode() {
         return postalCode;
     }
+
 }

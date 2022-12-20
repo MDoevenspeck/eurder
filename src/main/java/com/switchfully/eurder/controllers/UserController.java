@@ -30,14 +30,14 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping(params = "userType", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<? extends UserDto> getAllUsersByUserType(@RequestParam(defaultValue = "all") String userType, @RequestHeader(required = false) String authorization) {
+    @GetMapping(params = "usertype", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<? extends UserDto> getAllUsersByUserType(@RequestParam(defaultValue = "all") String usertype, @RequestHeader(required = false) String authorization) {
         securityService.validateAuthorisation(authorization, Feature.GET_ALL_USERS_BY_USERTYPE);
-        return userService.getAllUsersByUserType(userType);
+        return userService.getAllUsersByUserType(usertype);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserDto getCustomerById(@PathVariable String id, @RequestHeader(required = false) String authorization) {
+    public UserDto getCustomerById(@PathVariable Long id, @RequestHeader(required = false) String authorization) {
         securityService.validateAuthorisation(authorization, Feature.GET_CUSTOMER_BY_ID);
         return userService.getCustomerById(id);
     }

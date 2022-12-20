@@ -9,11 +9,13 @@ import com.switchfully.eurder.model.users.Role;
 import com.switchfully.eurder.model.users.User;
 import com.switchfully.eurder.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -24,17 +26,17 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
-        return userMapper.toDto(userRepository.getAllUsers().values().stream().toList());
+        return userMapper.toDto(userRepository.findAll());
     }
 
     public List<? extends UserDto> getAllUsersByUserType(String userType) {
         if (userType.equals("customer")) {
-            return userRepository.getAllUsers().values().stream()
+            return userRepository.findAll().stream()
                     .filter(user -> user.getRole() == Role.CUSTOMER)
                     .map(customer -> userMapper.toDto((Customer) customer)).toList();
         }
         if (userType.equals("admin")) {
-            return userRepository.getAllUsers().values().stream()
+            return userRepository.findAll().stream()
                     .filter(user -> user.getRole().equals(Role.ADMIN))
                     .map(userMapper::toDto)
                     .toList();
@@ -42,19 +44,23 @@ public class UserService {
         throw new IllegalArgumentException("usertype not found");
     }
 
-    public UserDto getCustomerById(String id) {
-        User user = userRepository.getUserById(id).orElseThrow(() -> new NoSuchElementException("User with id " + id + " not found!"));
-        if (user instanceof Customer) {
-            return userMapper.toDto((Customer) user);
-        }
+    public UserDto getCustomerById(Long id) {
+        Customer user = userRepository.getCustomerByUserID(id).orElseThrow(() -> new NoSuchElementException("Customer with id " + id + " not found!"));
         return userMapper.toDto(user);
     }
 
     public UserDto createAdmin(CreateAdminDto createAdminDto) {
-        return userMapper.toDto(userRepository.saveUser(userMapper.toUser(createAdminDto)));
+        validateUsername(createAdminDto.username());
+        return userMapper.toDto(userRepository.save(userMapper.toAdmin(createAdminDto)));
     }
 
     public UserDto createCustomer(CreateCustomerDto createCustomerDto) {
-        return userMapper.toDto(userRepository.saveUser(userMapper.toCustomer(createCustomerDto)));
+        validateUsername(createCustomerDto.username());
+        return userMapper.toDto(userRepository.save(userMapper.toCustomer(createCustomerDto)));
+    }
+    private void validateUsername(String username){
+        if (userRepository.findByUsername(username).isPresent()){
+            throw new IllegalArgumentException("Username already exist");
+        }
     }
 }

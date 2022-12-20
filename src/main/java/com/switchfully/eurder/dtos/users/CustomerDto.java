@@ -9,16 +9,16 @@ public class CustomerDto extends UserDto{
 
     private final String email;
 
-    private final Address address;
+    private final AddressDto addressDto;
 
     private final String phoneNumber;
 
-    public CustomerDto(String id, String username, Role role, String firstname, String lastname, String email, Address address, String phoneNumber) {
+    public CustomerDto(long id, String username, Role role, String firstname, String lastname, String email, AddressDto address, String phoneNumber) {
         super(id, username, role);
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
-        this.address = address;
+        this.addressDto = address;
         this.phoneNumber = phoneNumber;
     }
 
@@ -34,8 +34,8 @@ public class CustomerDto extends UserDto{
         return email;
     }
 
-    public Address getAddress() {
-        return address;
+    public AddressDto getAddress() {
+        return addressDto;
     }
 
     public String getPhoneNumber() {

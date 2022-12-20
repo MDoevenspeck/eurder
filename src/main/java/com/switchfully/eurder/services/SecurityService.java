@@ -22,9 +22,9 @@ public class SecurityService {
         this.repository = repository;
     }
 
-    public String validateAuthorisation(String authorization, Feature feature) throws RuntimeException {
+    public long validateAuthorisation(String authorization, Feature feature) throws RuntimeException {
         UsernamePassword usernamePassword = getUseramePassword(authorization);
-        User user = repository.getUserByUsername(usernamePassword.getUsername()).orElseThrow(UnknownUserException::new);
+        User user = repository.findByUsername(usernamePassword.getUsername()).orElseThrow(UnauthorizedException::new);
 
         if (!user.doesPasswordMatch(usernamePassword.getPassword())) {
             logger.info("Wrong password");

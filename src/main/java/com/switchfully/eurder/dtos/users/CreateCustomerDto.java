@@ -18,16 +18,16 @@ public class CreateCustomerDto extends CreateUserDto {
     private final String email;
     @NotNull
     @Valid
-    private final Address address;
+    private final AddressDto addressDto;
     @NotBlank
     private final String phoneNumber;
 
-    public CreateCustomerDto(String username, String password, String firstname, String lastname, String email, Address address, String phoneNumber) {
+    public CreateCustomerDto(String username, String password, String firstname, String lastname, String email, AddressDto address, String phoneNumber) {
         super(username, password);
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
-        this.address = address;
+        this.addressDto = address;
         this.phoneNumber = phoneNumber;
         super.setRole(Role.CUSTOMER);
     }
@@ -44,8 +44,8 @@ public class CreateCustomerDto extends CreateUserDto {
         return email;
     }
 
-    public Address getAddress() {
-        return address;
+    public AddressDto getAddressDto() {
+        return addressDto;
     }
 
     public String getPhoneNumber() {

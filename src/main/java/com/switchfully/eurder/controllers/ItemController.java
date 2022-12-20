@@ -29,14 +29,14 @@ public class ItemController {
         return itemService.getAllItems();
     }
 
-    @GetMapping(params = "sorted_by_stock", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(params = "sorted-by-stock", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ItemDto> getAllItemsSortedByStockLevel(@RequestHeader(required = false) String authorization) {
         securityService.validateAuthorisation(authorization, Feature.GET_ALL_ITEMS_SORTED_BY_STOCK_LEVEL);
         return itemService.getAllItemsSortedByStockLevel();
     }
 
-    @GetMapping(params = "stock_level", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ItemDto> getAllItemsByStockLevel(@RequestParam("stock_level") String stockLevel, @RequestHeader(required = false) String authorization) {
+    @GetMapping(params = "stock-level", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ItemDto> getAllItemsByStockLevel(@RequestParam("stock-level") String stockLevel, @RequestHeader(required = false) String authorization) {
         securityService.validateAuthorisation(authorization, Feature.GET_ALL_ITEMS_BY_STOCK_LEVEL);
         return itemService.getAllItemsByStockLevel(stockLevel);
     }
@@ -50,7 +50,7 @@ public class ItemController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping(path = ("/{id}"), consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ItemDto updateItem(@PathVariable String id, @Valid @RequestBody UpdateItemDto updateItemDto, @RequestHeader(required = false) String authorization) {
+    public ItemDto updateItem(@PathVariable Long id, @Valid @RequestBody UpdateItemDto updateItemDto, @RequestHeader(required = false) String authorization) {
         securityService.validateAuthorisation(authorization, Feature.UPDATE_ITEM);
         return itemService.updateItem(updateItemDto, id);
     }

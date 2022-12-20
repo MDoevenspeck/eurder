@@ -19,6 +19,7 @@ public class CreateItemDto {
     @Digits(integer = 10, fraction = 0, message = "Stock amount must be an integer")
     private final String stock;
 
+
     public CreateItemDto(String name, String description, String price, String stock) {
         this.name = name;
         this.description = description;

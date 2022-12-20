@@ -1,6 +1,8 @@
 package com.switchfully.eurder.dtos.orders;
 
+import com.switchfully.eurder.model.items.Item;
+
 import java.time.LocalDate;
 
-public record ItemGroupDto (String itemId, int amount, double itemPriceFrozen, double total, LocalDate shippingDate){
+public record ItemGroupDto (Item item, int amount, double price, double total, LocalDate shippingDate){
 }

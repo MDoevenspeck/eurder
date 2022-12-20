@@ -1,11 +1,19 @@
 package com.switchfully.eurder.model.items;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class Price {
 
     public static final String CURRENCY = "EUR";
-    private final double amount;
-    private final String currency;
+    @Column(name= "price_amount")
+    private double amount;
+    @Column(name = "currency")
+    private String currency;
+
+    public Price() {
+    }
 
     public Price(double amount) {
         this.amount = amount;

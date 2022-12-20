@@ -3,12 +3,14 @@ package com.switchfully.eurder.dtos.users;
 import com.switchfully.eurder.model.users.Role;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class CreateUserDto {
     @NotBlank
     private final String username;
     @NotBlank
     private final String password;
+    @NotNull
     private Role role;
 
     public CreateUserDto(String username, String password) {

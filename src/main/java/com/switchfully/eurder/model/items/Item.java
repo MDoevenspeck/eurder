@@ -1,24 +1,41 @@
 package com.switchfully.eurder.model.items;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
 import java.util.UUID;
 
+@Entity
+@Table(name = "items")
 public class Item {
-    private final String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_seq")
+    @SequenceGenerator(name = "item_seq", sequenceName = "item_seq", allocationSize = 1)
+    private Long id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "description")
     private String description;
+    @Embedded
     private Price price;
+    @Column(name = "stock")
     private int stock;
 
+    @Transient
+    private StockLevel stockLevel;
+    public Item() {
+    }
+
     public Item(String name, String description, Price price, int stock) {
-        this.id = String.valueOf(UUID.randomUUID());
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
     }
 
-    public String getId() {
-        return this.id;
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -53,5 +70,10 @@ public class Item {
         this.stock = stock;
     }
 
-
+    public void setStockLevel(StockLevel stockLevel) {
+        this.stockLevel = stockLevel;
+    }
+    public StockLevel getStockLevel() {
+        return stockLevel;
+    }
 }
